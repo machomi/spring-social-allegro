@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies { classpath "com.netflix.nebula:gradle-extra-configurations-plugin:3.2.0" }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'nebula.optional-base'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url "http://repo.spring.io/plugins-release" }
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+ext {
+    jacksonVersion = findProperty('jacksonVersion') ?: '2.8.6'
+
+    springBootVersion = findProperty('springBootVersion') ?: '1.5.3.RELEASE'
+    springSocialVersion = findProperty('springSocialVersion') ?: '1.1.4.RELEASE'
+    springVersion = findProperty('springVersion') ?: '4.3.8.RELEASE'
+    springJwtVersion = findProperty('springJwtVersion') ?: '1.0.8.RELEASE'
+
+    jsonVersion = findProperty('jsonVersion') ?: '20170516'
+    junitVersion = findProperty('junitVersion') ?: '4.12'
+    mockitoVersion = findProperty('mockitoVersion') ?: '2.8.9'
+}
+
+group = 'com.github.spring-social'
+description = 'Allegro API for Spring Social'
+
+publishing {
+  publications {
+      maven(MavenPublication) {
+          groupId 'com.github.spring-social'
+          artifactId 'spring-social-allegro'
+          version '1.0'
+
+          from components.java
+      }
+  }
+}
+
+//[compileJava, compileTestJava]*.options*.compilerArgs = ['-Xlint:all', '-Xlint:-processing', '-Werror']
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter:$springBootVersion", optional)
+    compile("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion", optional)
+
+    compile("org.springframework.social:spring-social-core:$springSocialVersion")
+    compile("org.springframework.social:spring-social-config:$springSocialVersion")
+    compile("org.springframework.social:spring-social-security:$springSocialVersion", optional)
+    
+    // compile('org.springframework.security.oauth:spring-security-oauth2:2.2.1.RELEASE')
+    // compile("org.springframework.security:spring-security-jwt:$springJwtVersion")
+    
+    compile 'io.jsonwebtoken:jjwt:0.9.0'
+
+    compile("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    compile("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    compile("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+    
+    compileOnly("javax.servlet:javax.servlet-api:3.0.1")
+
+    testCompile("junit:junit:$junitVersion")
+    testCompile("org.mockito:mockito-core:$mockitoVersion")
+    testCompile("org.springframework:spring-test:$springVersion")
+    testCompile("org.json:json:$jsonVersion")
+}
+
